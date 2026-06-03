@@ -1,0 +1,165 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: verifyCheckoutPage.spec.ts >> Verify Checkout >> Verify checkout with valid data
+- Location: tests/verifyCheckoutPage.spec.ts:36:9
+
+# Error details
+
+```
+Error: expect(locator).toHaveText(expected) failed
+
+Locator: locator('.inventory_item_name').first()
+Expected: "Sauce Labs Bike Light"
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toHaveText" with timeout 5000ms
+  - waiting for locator('.inventory_item_name').first()
+
+```
+
+```yaml
+- button "Open Menu"
+- img "Open Menu"
+- text: Swag Labs Your Cart QTY Description
+- button "Go back Continue Shopping":
+  - img "Go back"
+  - text: Continue Shopping
+- button "Checkout"
+- contentinfo:
+  - list:
+    - listitem:
+      - link "Twitter":
+        - /url: https://twitter.com/saucelabs
+    - listitem:
+      - link "Facebook":
+        - /url: https://www.facebook.com/saucelabs
+    - listitem:
+      - link "LinkedIn":
+        - /url: https://www.linkedin.com/company/sauce-labs/
+  - text: © 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy
+```
+
+# Test source
+
+```ts
+  1   | import { Page, expect } from "@playwright/test";
+  2   | 
+  3   | export class ProductPage {
+  4   |   readonly page: Page;
+  5   |   constructor(page: Page) {
+  6   |     this.page = page;
+  7   |   }
+  8   |   async verfiyProductName(productName: string, index: number) {
+  9   |     await expect(
+  10  |       this.page.locator(".inventory_item_name").nth(index),
+> 11  |     ).toHaveText(productName);
+      |       ^ Error: expect(locator).toHaveText(expected) failed
+  12  |   }
+  13  |   async verfiyProductPrice(productPrice: string, index: number) {
+  14  |     await expect(
+  15  |       this.page.locator(".inventory_item_price").nth(index),
+  16  |     ).toHaveText(productPrice);
+  17  |   }
+  18  |   async verifyProductImage(productImage: string, index: number) {
+  19  |     const image = this.page.locator(".inventory_item_img img").nth(index);
+  20  |     await expect(image).toBeVisible();
+  21  |     await expect(image).toHaveAttribute("alt", productImage);
+  22  |   }
+  23  |   async verifyProductButton(index: number) {
+  24  |     await expect(
+  25  |       this.page.locator('button[data-test^="add-to-cart"]').nth(index),
+  26  |     ).toBeVisible();
+  27  |   }
+  28  |   async verifyCartCount(cartCount: string) {
+  29  |     await expect(this.page.locator(".shopping_cart_badge")).toHaveText(
+  30  |       cartCount,
+  31  |     );
+  32  |   }
+  33  |   async VerfiyCartNavigation(CartUrl: string) {
+  34  |     await expect(this.page).toHaveURL(CartUrl);
+  35  |   }
+  36  |   async clickAddToCart(index: number) {
+  37  |     await this.page
+  38  |       .locator(".inventory_item")
+  39  |       .nth(index)
+  40  |       .getByRole("button")
+  41  |       .click();
+  42  |   }
+  43  |   async clickRemoveButton(index: number) {
+  44  |     await this.page
+  45  |       .locator(".inventory_item")
+  46  |       .nth(index)
+  47  |       .getByRole("button", { name: "Remove" })
+  48  |       .click();
+  49  |   }
+  50  |   
+  51  |   async VerifyCartBadgeNotShow() {
+  52  |     await expect(this.page.locator(".shopping_cart_badge")).toBeHidden();
+  53  |   }
+  54  |   async clickCartIcon() {
+  55  |     await this.page.locator(".shopping_cart_link").click();
+  56  |   }
+  57  |   async clickOnProduct(index: number) {
+  58  |     await this.page.locator(".inventory_item_name").nth(index).click();
+  59  |   }
+  60  |   async verfiyProductDescription(productDescryption: string) {
+  61  |     await expect(
+  62  |       this.page.locator(".inventory_details_desc"),
+  63  |     ).toHaveText(productDescryption);
+  64  |   }
+  65  |   async verifyAllProductVisible(
+  66  |     productName: string,
+  67  |     productPrice: string,
+  68  |     productButton: string,
+  69  |     productImage: string,
+  70  |     index: number,
+  71  |   ) {
+  72  |     await this.verfiyProductName(productName, index);
+  73  |     await this.verfiyProductPrice(productPrice, index);
+  74  |     await this.verifyProductButton(index);
+  75  |     await this.verifyProductImage(productImage, index);
+  76  |   }
+  77  |   async verifySingleProduct(index: number, cartCount: string) {
+  78  |     await this.clickAddToCart(index);
+  79  |     await this.verifyCartCount(cartCount);
+  80  |   }
+  81  |   async verifySingleProductRemove(index: number, cartCount: string) {
+  82  |     await this.clickAddToCart(index);
+  83  |     await this.verifyCartCount(cartCount);
+  84  |     await this.clickRemoveButton(index);
+  85  |     await this.VerifyCartBadgeNotShow();
+  86  |   }
+  87  |   async verifyProductData(
+  88  |     index: number,
+  89  |     productName: string,
+  90  |     productPrice: string,
+  91  |     productImage: string,
+  92  |     productDescription: string,
+  93  |   ) {
+  94  |     await this.clickOnProduct(index);
+  95  | 
+  96  |     await expect(this.page.locator(".inventory_details_name")).toHaveText(
+  97  |       productName,
+  98  |     );
+  99  | 
+  100 |     await expect(this.page.locator(".inventory_details_price")).toHaveText(
+  101 |       productPrice,
+  102 |     );
+  103 | 
+  104 |     await expect(this.page.locator(".inventory_details_img")).toHaveAttribute(
+  105 |       "alt",
+  106 |       productImage,
+  107 |     );
+  108 | 
+  109 |     await expect(this.page.locator(".inventory_details_desc")).toHaveText(
+  110 |       productDescription,
+  111 |     );
+```

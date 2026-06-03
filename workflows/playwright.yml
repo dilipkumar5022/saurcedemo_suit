@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Playwright Test Execution Report
-          to: yourmail@gmail.com
+          to: dilipkumarketha5@gmail.com
           from: GitHub Actions
           body: |
             Playwright execution completed.

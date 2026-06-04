@@ -2,7 +2,7 @@ import { test as base } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
 import { ProductPage } from "../pages/ProductPage";
 import { SortProduct } from "../pages/SortProduct";
-import { CartPage } from "../pages/cartPage";
+import { CartPage } from "../pages/CartPage";
 import { CheckoutPage } from "../pages/CheckoutPage";
 type customerFixture={
      loginPage:LoginPage
